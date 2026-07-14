@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>¡Nos Fuimos!</title>
+
+<!-- PWA: manifest -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0E7C7B" />
+
+<!-- Soporte iOS (Safari no lee bien el manifest, necesita estas etiquetas) -->
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nos Fuimos!" />
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #0E7C7B;
+    overflow: hidden;
+  }
+  #app-frame {
+    border: none;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh; /* respeta notch/barra de iOS */
+    display: block;
+  }
+  #loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    background: linear-gradient(180deg, #0E7C7B 0%, #F0993D 100%);
+    color: white;
+    font-family: -apple-system, system-ui, sans-serif;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+  }
+  #loading img {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+  }
+  #loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Pantalla de carga simple mientras arranca la app real -->
+  <div id="loading">
+    <img src="icons/icon-192.png" alt="Nos Fuimos!" />
+    <div>Cargando ¡Nos Fuimos!…</div>
+  </div>
+
+  <!--
+    ==========================================================
+    ACÁ VA LA URL DE TU APP DE APPS SCRIPT (la que termina en /exec)
+    Reemplazá el texto PEGAR_URL_AQUI de la línea de abajo.
+    Ejemplo: https://script.google.com/macros/s/AKfycb.../exec
+    ==========================================================
+  -->
+  <iframe
+    id="app-frame"
+    src="https://script.google.com/macros/s/AKfycbxkbasyeFh1cocblM80N4qQKFRym-0yjQVp_xYp9YaZZWmlILsLmKLcxmBQWbJfJmxu/exec"
+    title="Nos Fuimos! - App de viaje familiar"
+    allow="clipboard-write"
+  ></iframe>
+
+  <script>
+    const frame = document.getElementById("app-frame");
+    const loading = document.getElementById("loading");
+
+    frame.addEventListener("load", () => {
+      loading.classList.add("hidden");
+    });
+
+    // Por las dudas, ocultar el loader a los 4s aunque el evento load no dispare
+    setTimeout(() => loading.classList.add("hidden"), 4000);
+
+    // Registrar el service worker (cachea solo este shell, no los datos)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js").catch((err) => {
+          console.warn("No se p

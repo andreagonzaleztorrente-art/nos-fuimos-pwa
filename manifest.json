@@ -1,0 +1,25 @@
+{
+  "name": "¡Nos Fuimos!",
+  "short_name": "Nos Fuimos!",
+  "description": "Planificación colaborativa del viaje familiar a Argentina 2026",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E7C7B",
+  "theme_color": "#0E7C7B",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
