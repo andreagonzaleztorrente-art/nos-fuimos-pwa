@@ -23,22 +23,45 @@
     background: #0E7C7B;
     overflow: hidden;
   }
-  #loading {
+  #screen {
     position: fixed;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     background: linear-gradient(180deg, #0E7C7B 0%, #F0993D 100%);
     color: white;
     font-family: -apple-system, system-ui, sans-serif;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
   }
-  #loading img {
-    width: 72px;
-    height: 72px;
-    border-radius: 16px;
+  #screen img {
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  }
+  #screen h1 { font-size: 22px; margin: 4px 0 0; }
+  #screen p { margin: 0; opacity: .9; font-size: 15px; }
+  #openBtn {
+    margin-top: 12px;
+    background: white;
+    color: #0E7C7B;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #hint {
+    margin-top: 18px;
+    font-size: 13px;
+    opacity: .85;
+    max-width: 280px;
   }
 </style>
 </head>
@@ -47,12 +70,17 @@
   <!--
     ==========================================================
     ACÁ VA LA URL DE TU APP DE APPS SCRIPT (la que termina en /exec)
-    Es la misma que ya usaste en index.html.
     ==========================================================
   -->
-  <div id="loading">
+  <div id="screen">
     <img src="icons/icon-192.png" alt="Nos Fuimos!" />
-    <div>Cargando ¡Nos Fuimos!…</div>
+    <h1>¡Nos Fuimos!</h1>
+    <p>Planeación colaborativa de vacaciones</p>
+    <button id="openBtn">Abrir la app ✈️</button>
+    <div id="hint">
+      Tip: si todavía no la instalaste, agregala a tu pantalla de inicio
+      ANTES de tocar "Abrir la app", así el ícono queda bien.
+    </div>
   </div>
 
   <script>
@@ -65,8 +93,21 @@
       });
     }
 
-    // Redirección de pantalla completa (evita cualquier bloqueo de iframe)
-    window.location.replace(APP_URL);
+    function goToApp() {
+      window.location.replace(APP_URL);
+    }
+
+    document.getElementById("openBtn").addEventListener("click", goToApp);
+
+    // Si ya se abrió desde el ícono instalado (modo standalone), entra directo
+    // sin mostrar este botón, para que sea igual de rápido que antes.
+    var isStandalone =
+      window.navigator.standalone === true || // iOS
+      window.matchMedia("(display-mode: standalone)").matches; // Android/otros
+
+    if (isStandalone) {
+      goToApp();
+    }
   </script>
 
 </body>
