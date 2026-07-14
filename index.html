@@ -37,6 +37,7 @@
     text-align: center;
     padding: 24px;
     box-sizing: border-box;
+    z-index: 5;
   }
   #screen img {
     width: 88px;
@@ -63,6 +64,16 @@
     opacity: .85;
     max-width: 280px;
   }
+  #appFrame {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border: none;
+    display: none;
+    z-index: 1;
+  }
 </style>
 </head>
 <body>
@@ -83,6 +94,8 @@
     </div>
   </div>
 
+  <iframe id="appFrame" title="Nos Fuimos! - App de viaje familiar"></iframe>
+
   <script>
     var APP_URL = "https://script.google.com/macros/s/AKfycbxkbasyeFh1cocblM80N4qQKFRym-0yjQVp_xYp9YaZZWmlILsLmKLcxmBQWbJfJmxu/exec";
 
@@ -93,14 +106,43 @@
       });
     }
 
-    function goToApp() {
+    var screenEl = document.getElementById("screen");
+    var frameEl  = document.getElementById("appFrame");
+    var fellBack = false;
+
+    function fallbackToRedirect() {
+      if (fellBack) return;
+      fellBack = true;
       window.location.replace(APP_URL);
+    }
+
+    function goToApp() {
+      // 1) Intentamos mostrar la app embebida (mismo dominio = sin barra de navegador)
+      screenEl.style.display = "none";
+      frameEl.style.display = "block";
+      frameEl.src = APP_URL;
+
+      // 2) Si en 3.5s no se pudo confirmar que cargó bien, caemos al redirect normal
+      var safetyTimer = setTimeout(fallbackToRedirect, 3500);
+
+      frameEl.addEventListener("load", function() {
+        // Si el iframe efectivamente cargó contenido (no un bloqueo silencioso),
+        // cancelamos el fallback.
+        try {
+          // Si el navegador nos deja leer esto sin tirar error de cross-origin
+          // asumimos que cargó bien (mismo comportamiento aunque sea cross-origin,
+          // el evento 'load' alcanza como señal de éxito en la mayoría de los casos).
+          clearTimeout(safetyTimer);
+        } catch (e) {
+          // Si algo falla acá, dejamos que el timer de seguridad haga el fallback.
+        }
+      });
     }
 
     document.getElementById("openBtn").addEventListener("click", goToApp);
 
     // Si ya se abrió desde el ícono instalado (modo standalone), entra directo
-    // sin mostrar este botón, para que sea igual de rápido que antes.
+    // sin mostrar el botón, para que sea igual de rápido que antes.
     var isStandalone =
       window.navigator.standalone === true || // iOS
       window.matchMedia("(display-mode: standalone)").matches; // Android/otros
